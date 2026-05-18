@@ -1,0 +1,30 @@
+Application: Banking App Terraform Demo
+
+Architecture:
+- Public clients access an Amazon API Gateway HTTP API
+- API Gateway invokes a Lambda function called banking-api
+- Lambda connects to an Amazon RDS PostgreSQL database
+- Amazon Cognito is used for user authentication
+- AWS KMS is available for encryption
+- Amazon CloudWatch Logs captures Lambda logs
+
+Primary flows:
+1. Customer authenticates with Cognito
+2. Customer sends API requests to API Gateway
+3. API Gateway invokes Lambda
+4. Lambda reads account and transaction data from RDS
+5. Admin operations can update account status
+6. Lambda writes logs to CloudWatch
+
+Assets:
+- Customer account data
+- Transaction history
+- Authentication tokens and identity claims
+- Database credentials
+- Account status and admin actions
+
+Trust boundaries:
+- Internet to API Gateway
+- API Gateway to Lambda
+- Lambda to RDS
+- Admin workflow to account state
