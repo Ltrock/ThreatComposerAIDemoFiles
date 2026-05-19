@@ -1,0 +1,425 @@
+{
+  "schema": 1,
+  "applicationInfo": {},
+  "architecture": {},
+  "dataflow": {},
+  "assumptions": [],
+  "assumptionLinks": [],
+  "threats": [],
+  "mitigations": [
+    {
+      "id": "1b4be46d-c73c-4e84-814e-eff0009336fc",
+      "numericId": 1,
+      "content": "Configure RDS instance with publicly_accessible=false and place in private subnets with NAT Gateway for outbound connectivity. Implement VPC security groups allowing database access only from Lambda security group on port 5432.",
+      "tags": ["Preventative", "Network Security", "RDS", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Addresses direct internet access to database by moving RDS to private network segments. Requires infrastructure changes but provides strong network isolation."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "1d74f75b-acf5-4eef-9ad1-a5d70cba4df8",
+      "numericId": 2,
+      "content": "Replace hardcoded database credentials with AWS Secrets Manager. Configure Lambda to retrieve credentials at runtime using IAM role permissions with specific secret ARN access.",
+      "tags": ["Preventative", "Credential Management", "Secrets Manager", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Eliminates credential exposure in Terraform files and environment variables. Provides automatic rotation capabilities and audit logging for credential access."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "de715396-15e9-447b-b972-e24b6816b8b5",
+      "numericId": 3,
+      "content": "Implement principle of least privilege for Lambda IAM role. Replace wildcard permissions with specific actions: rds-db:connect for database access, logs:CreateLogGroup/CreateLogStream/PutLogEvents for logging, and specific KMS key access for encryption operations.",
+      "tags": ["Preventative", "IAM", "Least Privilege", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Reduces blast radius of compromised Lambda execution role by limiting AWS service access to only required operations. Requires careful analysis of actual Lambda function needs."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "f8f03065-a947-442a-8f8d-cb4aff57fb14",
+      "numericId": 4,
+      "content": "Implement authorization middleware in Lambda function to validate user access to specific account IDs. Compare authenticated user identity from Cognito JWT token with requested accountId parameter before database queries.",
+      "tags": ["Preventative", "Authorization", "Access Control", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Prevents horizontal privilege escalation by ensuring users can only access their own account data. Requires Lambda code changes to implement proper authorization checks."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "f1910e75-1245-4395-9bce-2da9b5416d3a",
+      "numericId": 5,
+      "content": "Enable RDS encryption at rest using the existing KMS key and configure SSL/TLS enforcement for database connections. Set rds.force_ssl=1 parameter and update Lambda connection strings to use SSL mode.",
+      "tags": ["Preventative", "Encryption", "Data Protection", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Protects data confidentiality both at rest and in transit. KMS key already exists in infrastructure, requires enabling encryption and updating connection configuration."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "9e013317-615e-4dc4-bbf2-4da6d215fab9",
+      "numericId": 6,
+      "content": "Implement Lambda function code signing using AWS Signer and configure function to only accept signed code packages. Enable function configuration lock to prevent unauthorized modifications.",
+      "tags": ["Preventative", "Code Integrity", "Lambda Security", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Ensures Lambda function integrity and prevents malicious code injection. Requires CI/CD pipeline integration for code signing process."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "4037edc9-bdb3-4761-ad05-42603d638d93",
+      "numericId": 7,
+      "content": "Configure API Gateway throttling with burst limit of 100 requests and rate limit of 50 requests per second per client. Implement usage plans with API keys for authenticated access and enable AWS WAF for DDoS protection.",
+      "tags": ["Preventative", "Rate Limiting", "DDoS Protection", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Prevents denial of service attacks through request rate limiting and volumetric attack protection. Requires API Gateway configuration changes and client integration with API keys."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "69ce408e-4149-435d-9b5f-346dd2f529d0",
+      "numericId": 8,
+      "content": "Implement role-based access control for admin endpoints using Cognito Groups. Create 'BankingAdmin' group with MFA requirement and validate group membership in Lambda before executing administrative operations.",
+      "tags": ["Preventative", "RBAC", "Multi-Factor Auth", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Ensures only authorized administrators can perform privileged operations like account freeze. Requires Cognito Groups configuration and Lambda authorization logic."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "b201dae4-0490-4343-a2dd-776ce3d99b5d",
+      "numericId": 9,
+      "content": "Implement log sanitization in Lambda function to prevent sensitive data logging. Create allowlist of loggable fields and redact PII, account numbers, and financial data before CloudWatch submission.",
+      "tags": ["Preventative", "Data Loss Prevention", "Logging Security", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Prevents sensitive data exposure through application logs while maintaining debugging capabilities. Requires Lambda code changes for log filtering implementation."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "cb096817-bfeb-4d9d-907d-ca005ecf2b57",
+      "numericId": 10,
+      "content": "Enable RDS automated backups with 7-day retention and configure point-in-time recovery. Implement database audit logging using pgAudit extension to track all data modification operations.",
+      "tags": ["Detective", "Corrective", "Data Integrity", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Provides data recovery capabilities and audit trail for financial transactions. Essential for regulatory compliance and fraud detection in banking applications."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "4a57b2a6-3bad-456a-afb4-ffe90e3be8b2",
+      "numericId": 11,
+      "content": "Configure API Gateway to enforce HTTPS-only communication by setting minimum TLS version 1.2 and disable HTTP protocol support. Implement HTTP to HTTPS redirect for any legacy clients.",
+      "tags": ["Preventative", "Encryption", "Transport Security", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Ensures all banking data transmission is encrypted in transit. Simple configuration change with significant security improvement for data confidentiality."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "d86c1548-9fe5-4e4a-a05c-3de9cfad7c2a",
+      "numericId": 12,
+      "content": "Enable Cognito advanced security features including adaptive authentication, compromised credentials detection, and account lockout after 5 failed login attempts within 15 minutes.",
+      "tags": ["Preventative", "Authentication", "Brute Force Protection", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Prevents credential-based attacks through advanced authentication controls. Cognito advanced security provides machine learning-based risk detection."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "4793b98e-be44-4a42-a92c-fcb4642a4a8e",
+      "numericId": 13,
+      "content": "Implement parameterized queries and input validation in Lambda function to prevent SQL injection. Use PostgreSQL prepared statements and validate all user inputs against expected data types and ranges.",
+      "tags": ["Preventative", "Input Validation", "SQL Injection Prevention", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Critical security control for banking applications handling financial data. Requires Lambda code review and implementation of secure database query patterns."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "9ec44f73-dc0e-4270-bab0-000edb9e0994",
+      "numericId": 14,
+      "content": "Configure Lambda reserved concurrency limits of 10 concurrent executions to prevent resource exhaustion. Implement API Gateway request validation and client-specific throttling based on authentication status.",
+      "tags": ["Preventative", "Resource Protection", "Concurrency Control", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Prevents service degradation from resource exhaustion attacks while maintaining service availability for legitimate users. Requires capacity planning for expected load."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "89523b25-c9ec-4d08-bdc1-0f22429be1c5",
+      "numericId": 15,
+      "content": "Implement Terraform state encryption and remote backend with S3 bucket using server-side encryption and versioning. Configure state file access using IAM policies with specific user/role restrictions.",
+      "tags": ["Preventative", "Infrastructure Security", "State Management", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Protects infrastructure configuration details and prevents unauthorized access to deployment secrets. Essential for secure infrastructure as code practices."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "60fc14f2-0ccb-4174-988e-d487b157d7c7",
+      "numericId": 16,
+      "content": "Implement API response normalization to return consistent error messages for valid and invalid account IDs. Add random delay (100-300ms) to prevent timing-based enumeration attacks.",
+      "tags": ["Preventative", "Info Disclosure Prevention", "API Security", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Prevents account enumeration attacks by eliminating response differences. Simple Lambda code change with significant security benefit for customer privacy."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "5a7472d4-30df-44b8-b68a-13477890d566",
+      "numericId": 17,
+      "content": "Configure CloudWatch alarms for suspicious database activity including failed login attempts, unusual query patterns, and data modification outside business hours. Integrate with SNS for real-time alerting.",
+      "tags": ["Detective", "Monitoring", "Anomaly Detection", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Enables early detection of database compromise or unauthorized access attempts. Requires baseline establishment for normal database activity patterns."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "29fef87e-3bce-4121-a0df-443aab0b2ce9",
+      "numericId": 18,
+      "content": "Implement Lambda runtime security monitoring using AWS GuardDuty and configure custom CloudWatch metrics for function invocation patterns, error rates, and execution duration anomalies.",
+      "tags": ["Detective", "Runtime Protection", "Anomaly Detection", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Detects potential Lambda compromise through behavioral analysis and runtime monitoring. Provides visibility into function execution anomalies and security events."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "bc380fe8-f245-4e11-8649-2bd9c8d82dbf",
+      "numericId": 19,
+      "content": "Configure database connection pooling with maximum connection limits and implement database activity monitoring using AWS Performance Insights to detect unusual access patterns or query anomalies.",
+      "tags": ["Detective", "Database Security", "Connection Management", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Provides visibility into database access patterns and prevents connection exhaustion attacks. Performance Insights offers detailed database monitoring capabilities."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    },
+    {
+      "id": "2ddcc4d2-1d43-4a4a-90ed-3ce577ad7e52",
+      "numericId": 20,
+      "content": "Implement API Gateway request/response logging with CloudTrail integration to audit all banking API access. Configure log analysis using CloudWatch Insights to detect suspicious access patterns and failed authentication attempts.",
+      "tags": ["Detective", "Audit Logging", "Access Monitoring", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Provides comprehensive audit trail for regulatory compliance and security incident investigation. Essential for banking applications requiring transaction traceability."
+        },
+        {
+          "key": "custom:agent",
+          "value": "Defender Persona Agent"
+        }
+      ]
+    }
+  ],
+  "mitigationLinks": [
+    {
+      "mitigationId": "1b4be46d-c73c-4e84-814e-eff0009336fc",
+      "linkedId": "b2968cb9-d81a-41f2-b282-55738c8a27c5"
+    },
+    {
+      "mitigationId": "1d74f75b-acf5-4eef-9ad1-a5d70cba4df8",
+      "linkedId": "223ec471-0d8c-4ed9-8632-6adec41a1d07"
+    },
+    {
+      "mitigationId": "1d74f75b-acf5-4eef-9ad1-a5d70cba4df8",
+      "linkedId": "8d82b02b-d61c-4591-8c6a-f986284fd8f8"
+    },
+    {
+      "mitigationId": "de715396-15e9-447b-b972-e24b6816b8b5",
+      "linkedId": "f5d30da1-ea57-44da-96ef-68bb17b1f0ea"
+    },
+    {
+      "mitigationId": "de715396-15e9-447b-b972-e24b6816b8b5",
+      "linkedId": "0767dd98-1cd8-4c22-aed6-8bd33a0747a1"
+    },
+    {
+      "mitigationId": "f8f03065-a947-442a-8f8d-cb4aff57fb14",
+      "linkedId": "fd2e63a1-d16f-46da-91f3-918540becea9"
+    },
+    {
+      "mitigationId": "f1910e75-1245-4395-9bce-2da9b5416d3a",
+      "linkedId": "c38d3619-63f4-4e1c-a2a7-6f64c90b09e2"
+    },
+    {
+      "mitigationId": "9e013317-615e-4dc4-bbf2-4da6d215fab9",
+      "linkedId": "5e368288-e1e7-4248-a2b7-eba209f2bf03"
+    },
+    {
+      "mitigationId": "4037edc9-bdb3-4761-ad05-42603d638d93",
+      "linkedId": "1e4f756d-c84a-45ca-85d6-9c57c2de5eb9"
+    },
+    {
+      "mitigationId": "69ce408e-4149-435d-9b5f-346dd2f529d0",
+      "linkedId": "22b1a2b7-88b8-48a8-a7c9-0b4ea5d8606a"
+    },
+    {
+      "mitigationId": "b201dae4-0490-4343-a2dd-776ce3d99b5d",
+      "linkedId": "22b4f26e-665b-4cae-919e-a9a9b9ccc257"
+    },
+    {
+      "mitigationId": "cb096817-bfeb-4d9d-907d-ca005ecf2b57",
+      "linkedId": "64468dc8-35bc-4d70-b6da-249886e5e3f0"
+    },
+    {
+      "mitigationId": "cb096817-bfeb-4d9d-907d-ca005ecf2b57",
+      "linkedId": "da2a95b6-0423-49ca-9539-55ce46865c08"
+    },
+    {
+      "mitigationId": "4a57b2a6-3bad-456a-afb4-ffe90e3be8b2",
+      "linkedId": "d687d567-f1c2-4e10-a899-e41855681784"
+    },
+    {
+      "mitigationId": "d86c1548-9fe5-4e4a-a05c-3de9cfad7c2a",
+      "linkedId": "8b1960c8-915a-44c7-bcc8-3bcbfb5c865c"
+    },
+    {
+      "mitigationId": "4793b98e-be44-4a42-a92c-fcb4642a4a8e",
+      "linkedId": "67882d7d-b619-4b3a-a119-0489c1695952"
+    },
+    {
+      "mitigationId": "9ec44f73-dc0e-4270-bab0-000edb9e0994",
+      "linkedId": "4eaf9054-3a0c-4c5a-8e7b-9ed8cd3615ae"
+    },
+    {
+      "mitigationId": "89523b25-c9ec-4d08-bdc1-0f22429be1c5",
+      "linkedId": "d80e1185-39f8-4a1a-857a-13df0e7f3132"
+    },
+    {
+      "mitigationId": "60fc14f2-0ccb-4174-988e-d487b157d7c7",
+      "linkedId": "d39a985e-051e-4a85-95fe-1a0fde3dc49e"
+    },
+    {
+      "mitigationId": "5a7472d4-30df-44b8-b68a-13477890d566",
+      "linkedId": "b2968cb9-d81a-41f2-b282-55738c8a27c5"
+    },
+    {
+      "mitigationId": "29fef87e-3bce-4121-a0df-443aab0b2ce9",
+      "linkedId": "addd9e98-232f-4943-820a-b3fcc5c5e9ae"
+    },
+    {
+      "mitigationId": "bc380fe8-f245-4e11-8649-2bd9c8d82dbf",
+      "linkedId": "67882d7d-b619-4b3a-a119-0489c1695952"
+    },
+    {
+      "mitigationId": "2ddcc4d2-1d43-4a4a-90ed-3ce577ad7e52",
+      "linkedId": "fd2e63a1-d16f-46da-91f3-918540becea9"
+    }
+  ]
+}

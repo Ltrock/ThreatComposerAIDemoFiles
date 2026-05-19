@@ -1,0 +1,754 @@
+{
+  "schema": 1,
+  "applicationInfo": {},
+  "architecture": {},
+  "dataflow": {},
+  "threats": [
+    {
+      "id": "b2968cb9-d81a-41f2-b282-55738c8a27c5",
+      "numericId": 1,
+      "threatSource": "internet-based attacker",
+      "prerequisites": "with network access to the publicly accessible RDS instance",
+      "threatAction": "directly connect to the PostgreSQL database bypassing API Gateway authentication",
+      "threatImpact": "unauthorized access to all banking data including accounts and transactions",
+      "impactedGoal": ["confidentiality", "integrity"],
+      "impactedAssets": ["RDS PostgreSQL banking database", "customer account data", "transaction records"],
+      "statement": "An internet-based attacker with network access to the publicly accessible RDS instance can directly connect to the PostgreSQL database bypassing API Gateway authentication, which leads to unauthorized access to all banking data including accounts and transactions, resulting in reduced confidentiality of RDS PostgreSQL banking database, customer account data, transaction records",
+      "status": "threatIdentified",
+      "tags": ["RDS PostgreSQL", "Database", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["S", "T", "I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "RDS instance configured as publicly accessible (publicly_accessible=true) allows direct database connections from internet. Combined with hardcoded credentials in Terraform variables, this creates critical exposure."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "223ec471-0d8c-4ed9-8632-6adec41a1d07",
+      "numericId": 2,
+      "threatSource": "malicious actor",
+      "prerequisites": "with access to Terraform configuration files",
+      "threatAction": "extract hardcoded database credentials from variables.tf",
+      "threatImpact": "credential compromise enabling direct database access",
+      "impactedGoal": ["confidentiality"],
+      "impactedAssets": ["database credentials", "RDS PostgreSQL banking database"],
+      "statement": "A malicious actor with access to Terraform configuration files can extract hardcoded database credentials from variables.tf, which leads to credential compromise enabling direct database access, resulting in reduced confidentiality of database credentials, RDS PostgreSQL banking database",
+      "status": "threatIdentified",
+      "tags": ["Terraform", "Credentials", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "Database password visible in variables.tf as default value. Source code repositories, CI/CD systems, or infrastructure teams could expose these credentials."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "f5d30da1-ea57-44da-96ef-68bb17b1f0ea",
+      "numericId": 3,
+      "threatSource": "attacker",
+      "prerequisites": "with compromised Lambda execution role",
+      "threatAction": "abuse overly broad IAM permissions to access unintended AWS services",
+      "threatImpact": "lateral movement and privilege escalation across AWS environment",
+      "impactedGoal": ["confidentiality", "integrity", "availability"],
+      "impactedAssets": ["AWS services", "CloudWatch logs", "KMS keys", "Cognito user pools"],
+      "statement": "An attacker with compromised Lambda execution role can abuse overly broad IAM permissions to access unintended AWS services, which leads to lateral movement and privilege escalation across AWS environment, resulting in reduced confidentiality of AWS services, CloudWatch logs, KMS keys, Cognito user pools",
+      "status": "threatIdentified",
+      "tags": ["IAM", "Lambda", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["T", "R", "I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "Lambda IAM policy grants wildcard permissions (logs:*, rds:*, kms:*, cognito-idp:*) violating principle of least privilege. Compromised Lambda could access resources beyond banking application scope."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "fd2e63a1-d16f-46da-91f3-918540becea9",
+      "numericId": 4,
+      "threatSource": "malicious user",
+      "prerequisites": "with valid Cognito credentials",
+      "threatAction": "access other users' account data by manipulating accountId parameters",
+      "threatImpact": "unauthorized access to other customers' banking information",
+      "impactedGoal": ["confidentiality"],
+      "impactedAssets": ["customer account data", "transaction records"],
+      "statement": "A malicious user with valid Cognito credentials can access other users' account data by manipulating accountId parameters, which leads to unauthorized access to other customers' banking information, resulting in reduced confidentiality of customer account data, transaction records",
+      "status": "threatIdentified",
+      "tags": ["API Gateway", "Authorization", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["S", "I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "API endpoints /accounts/{accountId} and /accounts/{accountId}/transactions may lack proper authorization checks to ensure users can only access their own data. Insecure Direct Object Reference vulnerability."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "c38d3619-63f4-4e1c-a2a7-6f64c90b09e2",
+      "numericId": 5,
+      "threatSource": "attacker",
+      "prerequisites": "intercepting network traffic",
+      "threatAction": "capture unencrypted data in transit between Lambda and RDS",
+      "threatImpact": "exposure of banking data during database communications",
+      "impactedGoal": ["confidentiality"],
+      "impactedAssets": ["banking data", "database communications"],
+      "statement": "An attacker intercepting network traffic can capture unencrypted data in transit between Lambda and RDS, which leads to exposure of banking data during database communications, resulting in reduced confidentiality of banking data, database communications",
+      "status": "threatIdentified",
+      "tags": ["RDS PostgreSQL", "Encryption", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "RDS storage encryption disabled (storage_encrypted=false) and no evidence of SSL/TLS enforcement for database connections. Data flows unprotected within VPC."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "5e368288-e1e7-4248-a2b7-eba209f2bf03",
+      "numericId": 6,
+      "threatSource": "malicious insider",
+      "prerequisites": "with administrative access to AWS account",
+      "threatAction": "modify Lambda function code or environment variables",
+      "threatImpact": "injection of malicious code into banking application logic",
+      "impactedGoal": ["integrity", "availability"],
+      "impactedAssets": ["Lambda function", "banking application logic"],
+      "statement": "A malicious insider with administrative access to AWS account can modify Lambda function code or environment variables, which leads to injection of malicious code into banking application logic, resulting in reduced integrity of Lambda function, banking application logic",
+      "status": "threatIdentified",
+      "tags": ["Lambda", "Insider Threat", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["T", "R"]
+        },
+        {
+          "key": "Comments",
+          "value": "Lambda function deployment from lambda.zip without code signing or integrity verification. Administrative access could modify function behavior or inject backdoors."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "1e4f756d-c84a-45ca-85d6-9c57c2de5eb9",
+      "numericId": 7,
+      "threatSource": "attacker",
+      "prerequisites": "with network access to API Gateway",
+      "threatAction": "perform denial of service attacks against banking API endpoints",
+      "threatImpact": "service unavailability preventing customer access to banking services",
+      "impactedGoal": ["availability"],
+      "impactedAssets": ["API Gateway", "banking services"],
+      "statement": "An attacker with network access to API Gateway can perform denial of service attacks against banking API endpoints, which leads to service unavailability preventing customer access to banking services, resulting in reduced availability of API Gateway, banking services",
+      "status": "threatIdentified",
+      "tags": ["API Gateway", "DoS", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["D"]
+        },
+        {
+          "key": "Comments",
+          "value": "No evidence of rate limiting, throttling, or DDoS protection configured on API Gateway. Public endpoints vulnerable to volumetric attacks."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "22b1a2b7-88b8-48a8-a7c9-0b4ea5d8606a",
+      "numericId": 8,
+      "threatSource": "unauthorized user",
+      "prerequisites": "bypassing authentication mechanisms",
+      "threatAction": "access admin endpoints without proper authorization",
+      "threatImpact": "unauthorized account freeze operations affecting customer accounts",
+      "impactedGoal": ["integrity", "availability"],
+      "impactedAssets": ["admin endpoints", "customer accounts"],
+      "statement": "An unauthorized user bypassing authentication mechanisms can access admin endpoints without proper authorization, which leads to unauthorized account freeze operations affecting customer accounts, resulting in reduced integrity of admin endpoints, customer accounts",
+      "status": "threatIdentified",
+      "tags": ["Admin Endpoints", "Authorization", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["S", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "POST /admin/freeze-account endpoint may lack proper role-based access controls. No evidence of admin role verification or multi-factor authentication for privileged operations."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "22b4f26e-665b-4cae-919e-a9a9b9ccc257",
+      "numericId": 9,
+      "threatSource": "attacker",
+      "prerequisites": "with access to CloudWatch logs",
+      "threatAction": "extract sensitive information from application logs",
+      "threatImpact": "exposure of customer data or credentials logged by Lambda function",
+      "impactedGoal": ["confidentiality"],
+      "impactedAssets": ["CloudWatch logs", "customer data", "application logs"],
+      "statement": "An attacker with access to CloudWatch logs can extract sensitive information from application logs, which leads to exposure of customer data or credentials logged by Lambda function, resulting in reduced confidentiality of CloudWatch logs, customer data, application logs",
+      "status": "threatIdentified",
+      "tags": ["CloudWatch", "Logging", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "Lambda function configured with CloudWatch logging but no evidence of log sanitization. Banking applications may inadvertently log sensitive data like account numbers or PII."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "64468dc8-35bc-4d70-b6da-249886e5e3f0",
+      "numericId": 10,
+      "threatSource": "malicious actor",
+      "prerequisites": "with database access",
+      "threatAction": "modify transaction records or account balances directly in PostgreSQL",
+      "threatImpact": "financial fraud through unauthorized data manipulation",
+      "impactedGoal": ["integrity"],
+      "impactedAssets": ["transaction records", "account balances", "financial data"],
+      "statement": "A malicious actor with database access can modify transaction records or account balances directly in PostgreSQL, which leads to financial fraud through unauthorized data manipulation, resulting in reduced integrity of transaction records, account balances, financial data",
+      "status": "threatIdentified",
+      "tags": ["RDS PostgreSQL", "Financial Fraud", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["T", "R"]
+        },
+        {
+          "key": "Comments",
+          "value": "Direct database access combined with lack of audit trails or data integrity controls enables financial manipulation. No evidence of database-level security controls or transaction logging."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "d687d567-f1c2-4e10-a899-e41855681784",
+      "numericId": 11,
+      "threatSource": "attacker",
+      "prerequisites": "intercepting API responses",
+      "threatAction": "capture customer banking data transmitted from API Gateway to clients",
+      "threatImpact": "exposure of account information and transaction history",
+      "impactedGoal": ["confidentiality"],
+      "impactedAssets": ["customer banking data", "API responses"],
+      "statement": "An attacker intercepting API responses can capture customer banking data transmitted from API Gateway to clients, which leads to exposure of account information and transaction history, resulting in reduced confidentiality of customer banking data, API responses",
+      "status": "threatIdentified",
+      "tags": ["API Gateway", "Data Transmission", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "API Gateway configured as HTTP API without enforced HTTPS. Banking data transmitted to clients may be intercepted through man-in-the-middle attacks or network sniffing."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "8b1960c8-915a-44c7-bcc8-3bcbfb5c865c",
+      "numericId": 12,
+      "threatSource": "malicious user",
+      "prerequisites": "with compromised Cognito credentials",
+      "threatAction": "perform brute force attacks against other user accounts",
+      "threatImpact": "unauthorized access to multiple customer accounts",
+      "impactedGoal": ["confidentiality", "integrity"],
+      "impactedAssets": ["Cognito User Pool", "customer accounts"],
+      "statement": "A malicious user with compromised Cognito credentials can perform brute force attacks against other user accounts, which leads to unauthorized access to multiple customer accounts, resulting in reduced confidentiality of Cognito User Pool, customer accounts",
+      "status": "threatIdentified",
+      "tags": ["Cognito", "Authentication", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["S", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "Cognito User Pool configured with password policies but no evidence of account lockout, rate limiting, or advanced security features like adaptive authentication."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "8d82b02b-d61c-4591-8c6a-f986284fd8f8",
+      "numericId": 13,
+      "threatSource": "attacker",
+      "prerequisites": "with access to Lambda environment variables",
+      "threatAction": "extract database credentials from environment configuration",
+      "threatImpact": "credential compromise enabling direct database access",
+      "impactedGoal": ["confidentiality"],
+      "impactedAssets": ["database credentials", "Lambda environment variables"],
+      "statement": "An attacker with access to Lambda environment variables can extract database credentials from environment configuration, which leads to credential compromise enabling direct database access, resulting in reduced confidentiality of database credentials, Lambda environment variables",
+      "status": "threatIdentified",
+      "tags": ["Lambda", "Environment Variables", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "Database credentials stored in Lambda environment variables (DB_HOST, DB_USER, DB_PASSWORD) without encryption. AWS console access or Lambda debugging could expose credentials."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "67882d7d-b619-4b3a-a119-0489c1695952",
+      "numericId": 14,
+      "threatSource": "malicious actor",
+      "prerequisites": "with network access to VPC",
+      "threatAction": "perform SQL injection attacks against PostgreSQL database",
+      "threatImpact": "unauthorized data access or database compromise",
+      "impactedGoal": ["confidentiality", "integrity", "availability"],
+      "impactedAssets": ["RDS PostgreSQL banking database", "banking data"],
+      "statement": "A malicious actor with network access to VPC can perform SQL injection attacks against PostgreSQL database, which leads to unauthorized data access or database compromise, resulting in reduced confidentiality of RDS PostgreSQL banking database, banking data",
+      "status": "threatIdentified",
+      "tags": ["RDS PostgreSQL", "SQL Injection", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["T", "I", "E", "D"]
+        },
+        {
+          "key": "Comments",
+          "value": "Lambda function code not available for analysis but banking applications commonly vulnerable to SQL injection. Direct database access amplifies impact of successful attacks."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "0767dd98-1cd8-4c22-aed6-8bd33a0747a1",
+      "numericId": 15,
+      "threatSource": "attacker",
+      "prerequisites": "with compromised AWS credentials",
+      "threatAction": "access KMS keys to decrypt sensitive data or modify encryption policies",
+      "threatImpact": "compromise of encryption controls and data protection mechanisms",
+      "impactedGoal": ["confidentiality", "integrity"],
+      "impactedAssets": ["KMS keys", "encrypted data", "encryption policies"],
+      "statement": "An attacker with compromised AWS credentials can access KMS keys to decrypt sensitive data or modify encryption policies, which leads to compromise of encryption controls and data protection mechanisms, resulting in reduced confidentiality of KMS keys, encrypted data, encryption policies",
+      "status": "threatIdentified",
+      "tags": ["KMS", "Encryption", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["T", "I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "KMS key available but not utilized for RDS encryption. Overly broad IAM permissions (kms:*) could allow unauthorized key access if Lambda role compromised."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "4eaf9054-3a0c-4c5a-8e7b-9ed8cd3615ae",
+      "numericId": 16,
+      "threatSource": "malicious user",
+      "prerequisites": "with valid authentication",
+      "threatAction": "perform excessive API requests to overwhelm Lambda function capacity",
+      "threatImpact": "service degradation affecting other customers' banking operations",
+      "impactedGoal": ["availability"],
+      "impactedAssets": ["Lambda function", "banking services"],
+      "statement": "A malicious user with valid authentication can perform excessive API requests to overwhelm Lambda function capacity, which leads to service degradation affecting other customers' banking operations, resulting in reduced availability of Lambda function, banking services",
+      "status": "threatIdentified",
+      "tags": ["Lambda", "Resource Exhaustion", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["D"]
+        },
+        {
+          "key": "Comments",
+          "value": "No evidence of Lambda concurrency limits or API Gateway throttling. Authenticated users could consume all available Lambda capacity through resource exhaustion attacks."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "d80e1185-39f8-4a1a-857a-13df0e7f3132",
+      "numericId": 17,
+      "threatSource": "attacker",
+      "prerequisites": "with access to Terraform state files",
+      "threatAction": "extract infrastructure secrets and configuration details",
+      "threatImpact": "exposure of deployment architecture and potential credentials",
+      "impactedGoal": ["confidentiality"],
+      "impactedAssets": ["Terraform state", "infrastructure configuration"],
+      "statement": "An attacker with access to Terraform state files can extract infrastructure secrets and configuration details, which leads to exposure of deployment architecture and potential credentials, resulting in reduced confidentiality of Terraform state, infrastructure configuration",
+      "status": "threatIdentified",
+      "tags": ["Terraform", "State Files", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "Terraform state files contain sensitive infrastructure details including resource IDs, configurations, and potentially secrets. State file security critical for infrastructure protection."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "da2a95b6-0423-49ca-9539-55ce46865c08",
+      "numericId": 18,
+      "threatSource": "malicious actor",
+      "prerequisites": "with database administrator privileges",
+      "threatAction": "delete or corrupt banking transaction records",
+      "threatImpact": "data loss affecting financial audit trails and customer records",
+      "impactedGoal": ["integrity", "availability"],
+      "impactedAssets": ["transaction records", "audit trails", "customer records"],
+      "statement": "A malicious actor with database administrator privileges can delete or corrupt banking transaction records, which leads to data loss affecting financial audit trails and customer records, resulting in reduced integrity of transaction records, audit trails, customer records",
+      "status": "threatIdentified",
+      "tags": ["RDS PostgreSQL", "Data Integrity", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["T", "D"]
+        },
+        {
+          "key": "Comments",
+          "value": "Database publicly accessible with hardcoded credentials creates risk of unauthorized administrative access. No evidence of backup strategies or point-in-time recovery configuration."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "addd9e98-232f-4943-820a-b3fcc5c5e9ae",
+      "numericId": 19,
+      "threatSource": "attacker",
+      "prerequisites": "exploiting Lambda function vulnerabilities",
+      "threatAction": "execute arbitrary code within the Lambda runtime environment",
+      "threatImpact": "complete compromise of banking application logic and data access",
+      "impactedGoal": ["confidentiality", "integrity", "availability"],
+      "impactedAssets": ["Lambda function", "banking application", "customer data"],
+      "statement": "An attacker exploiting Lambda function vulnerabilities can execute arbitrary code within the Lambda runtime environment, which leads to complete compromise of banking application logic and data access, resulting in reduced confidentiality of Lambda function, banking application, customer data",
+      "status": "threatIdentified",
+      "tags": ["Lambda", "Code Execution", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["T", "R", "I", "E", "D"]
+        },
+        {
+          "key": "Comments",
+          "value": "Lambda function code not available for security analysis. Python runtime vulnerabilities or application code flaws could enable remote code execution with access to database credentials and AWS services."
+        },
+        {
+          "key": "Priority",
+          "value": "High"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "d39a985e-051e-4a85-95fe-1a0fde3dc49e",
+      "numericId": 20,
+      "threatSource": "unauthorized user",
+      "prerequisites": "with network access to API Gateway",
+      "threatAction": "enumerate valid account IDs through systematic API probing",
+      "threatImpact": "discovery of valid customer account identifiers for targeted attacks",
+      "impactedGoal": ["confidentiality"],
+      "impactedAssets": ["customer account identifiers", "API endpoints"],
+      "statement": "An unauthorized user with network access to API Gateway can enumerate valid account IDs through systematic API probing, which leads to discovery of valid customer account identifiers for targeted attacks, resulting in reduced confidentiality of customer account identifiers, API endpoints",
+      "status": "threatIdentified",
+      "tags": ["API Gateway", "Information Disclosure", "AI Generated"],
+      "metadata": [
+        {
+          "key": "STRIDE",
+          "value": ["I", "E"]
+        },
+        {
+          "key": "Comments",
+          "value": "API endpoints /accounts/{accountId} may return different responses for valid vs invalid account IDs, enabling enumeration attacks. No evidence of rate limiting or account ID obfuscation."
+        },
+        {
+          "key": "Priority",
+          "value": "Medium"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "e0c78e92-1b9a-44a3-9bca-018eb03e5f93",
+      "numericId": 1,
+      "content": "Lambda function implements standard banking operations without proper input validation",
+      "tags": ["Lambda", "Input Validation", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Lambda source code not available for analysis, assuming typical banking application vulnerabilities based on API endpoints and infrastructure configuration"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "035a68a9-9967-47c1-aa86-7e5779975d61",
+      "numericId": 2,
+      "content": "API Gateway lacks proper rate limiting and DDoS protection mechanisms",
+      "tags": ["API Gateway", "Rate Limiting", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "No throttling or usage plans configured in Terraform, assuming default API Gateway configuration without protection"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "3474533e-642d-4671-93c0-1da540e36e0d",
+      "numericId": 3,
+      "content": "Database contains sensitive financial data including account balances and transaction history",
+      "tags": ["Database", "Financial Data", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Based on banking application context and API endpoints, assuming typical financial database schema with sensitive customer information"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "92890c71-1bfe-4e99-9486-bc96df27d497",
+      "numericId": 4,
+      "content": "Admin operations lack proper role-based access controls and multi-factor authentication",
+      "tags": ["Authorization", "Admin Controls", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "No evidence of admin role verification or MFA configuration for privileged operations like account freeze functionality"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "d9e7a4df-188f-4788-86ee-2c49e9e27345",
+      "numericId": 5,
+      "content": "Application logging may inadvertently capture sensitive customer data",
+      "tags": ["Logging", "Data Leakage", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "CloudWatch logging enabled but no evidence of log sanitization or data classification controls for banking application"
+        },
+        {
+          "key": "custom:agent",
+          "value": "STRIDE Analysis Agent"
+        }
+      ]
+    }
+  ],
+  "assumptionLinks": [
+    {
+      "type": "Threat",
+      "assumptionId": "e0c78e92-1b9a-44a3-9bca-018eb03e5f93",
+      "linkedId": "67882d7d-b619-4b3a-a119-0489c1695952"
+    },
+    {
+      "type": "Threat",
+      "assumptionId": "e0c78e92-1b9a-44a3-9bca-018eb03e5f93",
+      "linkedId": "addd9e98-232f-4943-820a-b3fcc5c5e9ae"
+    },
+    {
+      "type": "Threat",
+      "assumptionId": "035a68a9-9967-47c1-aa86-7e5779975d61",
+      "linkedId": "1e4f756d-c84a-45ca-85d6-9c57c2de5eb9"
+    },
+    {
+      "type": "Threat",
+      "assumptionId": "035a68a9-9967-47c1-aa86-7e5779975d61",
+      "linkedId": "4eaf9054-3a0c-4c5a-8e7b-9ed8cd3615ae"
+    },
+    {
+      "type": "Threat",
+      "assumptionId": "3474533e-642d-4671-93c0-1da540e36e0d",
+      "linkedId": "b2968cb9-d81a-41f2-b282-55738c8a27c5"
+    },
+    {
+      "type": "Threat",
+      "assumptionId": "3474533e-642d-4671-93c0-1da540e36e0d",
+      "linkedId": "64468dc8-35bc-4d70-b6da-249886e5e3f0"
+    },
+    {
+      "type": "Threat",
+      "assumptionId": "92890c71-1bfe-4e99-9486-bc96df27d497",
+      "linkedId": "22b1a2b7-88b8-48a8-a7c9-0b4ea5d8606a"
+    },
+    {
+      "type": "Threat",
+      "assumptionId": "d9e7a4df-188f-4788-86ee-2c49e9e27345",
+      "linkedId": "22b4f26e-665b-4cae-919e-a9a9b9ccc257"
+    }
+  ],
+  "mitigations": [],
+  "mitigationLinks": []
+}

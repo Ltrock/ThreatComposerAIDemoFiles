@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "applicationInfo": {},
+  "architecture": {},
+  "dataflow": {
+    "description": "### Human actors\n- Banking customers accessing account information\n- System administrators managing account operations\n- Database administrators maintaining PostgreSQL\n\n### External entities\n- Internet clients accessing API endpoints\n- AWS CloudWatch for logging and monitoring\n- AWS Cognito for user authentication services\n\n### Processes\n- API Gateway HTTP API routing requests\n- Lambda banking API processing business logic\n- RDS PostgreSQL database engine\n- Cognito User Pool authentication\n- CloudWatch Logs aggregation\n- KMS encryption service\n\n### Data stores\n\n| Store | Type | High-Value (Y/N) |\n|-------|------|------------------|\n| RDS PostgreSQL banking database | Relational DB | Y |\n| Cognito User Pool | Identity store | Y |\n| CloudWatch Logs | Log storage | N |\n| Lambda environment variables | Configuration | Y |\n| Terraform state | Infrastructure state | N |\n\n### Trust boundaries\n\n| Zone | Elements | Trust Level |\n|------|----------|-------------|\n| Internet | External clients | Untrusted |\n| AWS API Gateway | HTTP API, routing | Semi-trusted |\n| AWS VPC Internal | Lambda, RDS, security groups | Trusted |\n| AWS Managed Services | Cognito, CloudWatch, KMS | Trusted |\n\n### Data flows\n\n| Flow ID | Description | Source | Target | Trust Boundaries Crossed | Assets |\n|---------|-------------|--------|--------|--------------------------|--------|\n| F1 | Account info request | Internet client | API Gateway | Internet to AWS | Account data |\n| F2 | Lambda invocation | API Gateway | Lambda function | Gateway to VPC | Request data |\n| F3 | Database query | Lambda | RDS PostgreSQL | None | Account/transaction data |\n| F4 | Authentication check | Lambda | Cognito User Pool | VPC to AWS managed | User credentials |\n| F5 | Transaction history request | Internet client | API Gateway | Internet to AWS | Transaction data |\n| F6 | Admin freeze operation | Admin client | API Gateway | Internet to AWS | Admin commands |\n| F7 | Log data transmission | Lambda | CloudWatch Logs | VPC to AWS managed | Application logs |\n| F8 | Database response | RDS PostgreSQL | Lambda | None | Banking data |\n| F9 | API response | Lambda | API Gateway | VPC to Gateway | Response data |\n| F10 | Final response | API Gateway | Internet client | AWS to Internet | Account/transaction data |"
+  },
+  "assumptions": [
+    {
+      "id": "7f343303-c700-432d-bfe8-055c25deed4c",
+      "numericId": 1,
+      "content": "Lambda function implements banking business logic for account and transaction operations",
+      "tags": ["Lambda", "Business Logic", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Based on API endpoints and database configuration, assuming standard banking operations in Lambda code"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Data Flow Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "7155ad01-aaef-4f98-b55d-c237067e8e98",
+      "numericId": 2,
+      "content": "Database contains accounts table and transactions table based on API endpoint patterns",
+      "tags": ["Database", "Schema", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "API routes suggest /accounts/{id} and /accounts/{id}/transactions endpoints require corresponding data structures"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Data Flow Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "4093a5c3-0f14-4c02-8ea7-16ad0a709ff0",
+      "numericId": 3,
+      "content": "Authentication flow uses Cognito User Pool for user verification before API access",
+      "tags": ["Authentication", "Cognito", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Cognito User Pool configured with password policies suggests authentication integration with API"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Data Flow Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "3e611537-d558-4449-8910-42fb1827e1f5",
+      "numericId": 4,
+      "content": "Admin operations require elevated privileges for account management functions",
+      "tags": ["Authorization", "Admin", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "POST /admin/freeze-account endpoint suggests role-based access control for administrative functions"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Data Flow Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "89d77e53-bc92-41fc-8bc4-12502e382fa7",
+      "numericId": 5,
+      "content": "Database credentials flow from Terraform variables to Lambda environment variables",
+      "tags": ["Credentials", "Environment", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Lambda configuration shows DB_HOST, DB_USER, DB_PASSWORD environment variables from Terraform"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Data Flow Analysis Agent"
+        }
+      ]
+    }
+  ],
+  "assumptionLinks": [],
+  "threats": [],
+  "mitigations": [],
+  "mitigationLinks": []
+}

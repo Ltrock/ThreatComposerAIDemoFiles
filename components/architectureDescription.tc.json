@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "applicationInfo": {},
+  "architecture": {
+    "description": "### High Level Architecture\n\n#### Application type\nServerless banking API application deployed on AWS cloud infrastructure\n\n#### Layers\n- API Gateway: HTTP API for external client access\n- Compute: AWS Lambda serverless functions (Python 3.11)\n- Data: Amazon RDS PostgreSQL database\n- Authentication: Amazon Cognito User Pool\n- Logging: CloudWatch Logs\n\n#### Boundaries\n- Internet to API Gateway (public access)\n- API Gateway to Lambda (AWS internal)\n- Lambda to RDS within VPC (10.20.0.0/16)\n- Admin operations boundary for account management\n\n#### Technology components\n- AWS API Gateway HTTP API\n- AWS Lambda (Python 3.11 runtime)\n- Amazon RDS PostgreSQL 15.4\n- Amazon Cognito User Pool\n- AWS KMS for encryption\n- CloudWatch Logs\n- Terraform IaC\n\n#### Deployment architecture\n- Single AWS region (us-east-1)\n- VPC with two public subnets across AZs\n- Lambda in VPC with security groups\n- RDS in DB subnet group\n- Publicly accessible database\n\n#### APIs\n| Endpoint | Method | Purpose |\n|----------|--------|---------|\n| /accounts/{accountId} | GET | Retrieve account information |\n| /accounts/{accountId}/transactions | GET | Get transaction history |\n| /admin/freeze-account | POST | Admin account freeze operation |\n\n#### Security relevant components\n- Cognito authentication with password policies\n- IAM roles with overly broad permissions (logs:*, rds:*, kms:*, cognito-idp:*)\n- KMS key available but RDS storage unencrypted\n- Database credentials in Terraform variables\n- Public database accessibility\n\n### Low Level Architecture\n- AWS VPC (10.20.0.0/16) with public subnets in two AZs\n- API Gateway HTTP API with Lambda proxy integration\n- Lambda function with VPC configuration and security group\n- RDS PostgreSQL instance in public subnets with security group\n- Cognito User Pool with client configuration\n- CloudWatch Log Group for Lambda logging\n- IAM execution role with attached policy\n- KMS key with alias for encryption capabilities\n- Security groups for Lambda (all outbound) and RDS (port 5432 from VPC)\n- DB subnet group spanning both availability zones"
+  },
+  "dataflow": {},
+  "assumptions": [
+    {
+      "id": "f3e0cc11-c091-4d86-a506-ddabc487e84c",
+      "numericId": 1,
+      "content": "Lambda function source code exists in lambda.zip but actual implementation not available for analysis",
+      "tags": ["Lambda", "Source Code", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Terraform references lambda.zip file but Python application code not present in repository"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Architecture Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "bd541e57-b373-43ce-8bf9-e601448c3325",
+      "numericId": 2,
+      "content": "Application uses standard AWS serverless patterns with API Gateway, Lambda, and RDS",
+      "tags": ["AWS", "Serverless", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Architecture follows typical AWS serverless web application pattern based on Terraform configuration"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Architecture Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "4ac5951f-2c78-4155-909e-4ef24f07cf83",
+      "numericId": 3,
+      "content": "Database contains banking-specific data including accounts and transactions based on API endpoints",
+      "tags": ["Database", "Banking", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "API routes suggest account and transaction data storage in PostgreSQL database"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Architecture Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "feec01fe-613c-4a40-9272-fb1e23aaa122",
+      "numericId": 4,
+      "content": "IAM permissions are intentionally overpermissive for educational threat modeling purposes",
+      "tags": ["IAM", "Security", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Lambda IAM policy grants wildcard permissions to multiple AWS services as security gap for demos"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Architecture Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "5e7b3277-bcfc-4a55-adbc-5ac4aadb1ef8",
+      "numericId": 5,
+      "content": "RDS instance is publicly accessible and storage unencrypted despite KMS key availability",
+      "tags": ["RDS", "Encryption", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "RDS configuration shows publicly_accessible=true and storage_encrypted=false as security gaps"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Architecture Analysis Agent"
+        }
+      ]
+    }
+  ],
+  "assumptionLinks": [],
+  "threats": [],
+  "mitigations": [],
+  "mitigationLinks": []
+}

@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "applicationInfo": {
+    "name": "Banking App Terraform Demo",
+    "description": "### Summary\nAWS-based banking application infrastructure for threat modeling demonstrations. Provides customer account access and admin operations through API Gateway, Lambda, and RDS PostgreSQL.\n\n### Key objectives\n- Demonstrate banking application infrastructure patterns\n- Enable threat modeling training and AI tool testing\n- Showcase AWS serverless architecture with security considerations\n- Provide realistic financial services use case scenarios\n\n### Use-cases\n- Customer account information retrieval\n- Transaction history viewing\n- Administrative account management (freeze/unfreeze)\n- User authentication and authorization\n- Secure data storage and access\n\n### Features\n- RESTful API via Amazon API Gateway HTTP API\n- Serverless compute with AWS Lambda (Python 3.11)\n- PostgreSQL database on Amazon RDS\n- User authentication via Amazon Cognito User Pool\n- Encryption capabilities with AWS KMS\n- Centralized logging with CloudWatch Logs\n- VPC networking with public subnets"
+  },
+  "architecture": {},
+  "dataflow": {},
+  "assumptions": [
+    {
+      "id": "97cf303d-ad80-43bf-a6a7-95a163d9ccea",
+      "numericId": 1,
+      "content": "Application is deployed in AWS cloud environment with standard security configurations",
+      "tags": ["AWS", "Cloud", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Based on Terraform configuration targeting AWS services and standard cloud deployment patterns"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Application Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "068cce8d-cbf6-44d8-bdf5-232a03d43776",
+      "numericId": 2,
+      "content": "Infrastructure is provisioned using Terraform with version >= 1.5.0 and AWS provider ~> 5.0",
+      "tags": ["Terraform", "Infrastructure", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Determined from terraform block requirements in main.tf configuration file"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Application Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "d1fc5d1f-e666-4fde-84d9-01c06ce6ed4e",
+      "numericId": 3,
+      "content": "Application intentionally includes security gaps for educational threat modeling purposes",
+      "tags": ["Security", "Educational", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Explicitly stated in README.md that project includes security gaps for AI threat modeling tool testing"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Application Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "126dff30-aa95-4d17-a7f2-6fa7bfce1755",
+      "numericId": 4,
+      "content": "Lambda function code exists in lambda.zip file but source code not available for analysis",
+      "tags": ["Lambda", "Source Code", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Lambda configuration references lambda.zip file but actual Python application code not present in directory"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Application Analysis Agent"
+        }
+      ]
+    },
+    {
+      "id": "f4fadf32-8a24-4e57-ac62-4dbe424aeb72",
+      "numericId": 5,
+      "content": "Database credentials are hardcoded in Terraform variables for demonstration purposes",
+      "tags": ["Database", "Credentials", "AI Generated"],
+      "metadata": [
+        {
+          "key": "Comments",
+          "value": "Default database password visible in variables.tf, indicating non-production security practices"
+        },
+        {
+          "key": "custom:agent",
+          "value": "Application Analysis Agent"
+        }
+      ]
+    }
+  ],
+  "assumptionLinks": [],
+  "threats": [],
+  "mitigations": [],
+  "mitigationLinks": []
+}
